@@ -3,6 +3,8 @@ import time
 import json
 import datetime
 import os
+import random
+import sys
 
 # Function to read authorization tokens from data.txt
 def read_authorizations(file_path):
@@ -22,7 +24,10 @@ def collect_coin(auth_token, collect_amount, hash_code, collect_seq_no):
         "collectSeqNo": collect_seq_no
     }
     response = requests.post(url, headers=headers, json=payload)
-    return response.status_code, response.json()
+    try:
+        return response.status_code, response.json()
+    except json.JSONDecodeError:
+        return response.status_code, response.text
 
 # Function to display countdown timer
 def countdown_timer(seconds):
@@ -43,7 +48,11 @@ def main():
     for idx, token in enumerate(auth_tokens, start=1):
         print(f'Processing account {idx}/{total_accounts}')
         
-        status_code, response_data = collect_coin(token, 106, 'aaed18dd24553c5145011a03f12c53bf', 5)
+        collect_amount = random.randint(100, 200)  # Random collect amount
+        hash_code = ''.join(random.choices('abcdef0123456789', k=32))  # Random hash code
+        collect_seq_no = random.randint(1, 10)  # Random collect sequence number
+        
+        status_code, response_data = collect_coin(token, collect_amount, hash_code, collect_seq_no)
         
         if status_code == 200:
             print(f'Account {idx} processed successfully: {response_data}')
@@ -57,7 +66,7 @@ def main():
     
     # Restart the script
     print('Restarting script.')
-    os.execv(__file__, ['python'] + sys.argv)
+    os.execv(sys.executable, ['python'] + sys.argv)
 
 if __name__ == "__main__":
     main()
