@@ -24,7 +24,7 @@ def collect_coin(auth_token, collect_amount, hash_code, collect_seq_no):
         "Content-Type": "application/json"
     }
     payload = {
-        "collectAmount": collect_amount,
+        "collectAmount": 150,
         "hashCode": hash_code,
         "collectSeqNo": collect_seq_no
     }
