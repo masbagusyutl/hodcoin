@@ -2,7 +2,6 @@ import requests
 import time
 import json
 import os
-import random
 import sys
 
 # Function to read authorization tokens and hash codes from data.txt
@@ -47,13 +46,13 @@ def countdown_timer(seconds):
 def main():
     auth_data = read_authorizations('data.txt')
     total_accounts = len(auth_data)
+    collect_amount = 150  # Set a fixed collect amount
 
     print(f'Total accounts: {total_accounts}')
     
     for idx, (token, hash_code) in enumerate(auth_data, start=1):
         print(f'Processing account {idx}/{total_accounts}')
         
-        collect_amount = random.randint(100, 200)  # Random collect amount
         collect_seq_no = random.randint(1, 10)  # Random collect sequence number
         
         status_code, response_data = collect_coin(token, collect_amount, hash_code, collect_seq_no)
