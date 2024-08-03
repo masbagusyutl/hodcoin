@@ -2,6 +2,7 @@ import requests
 import time
 import json
 import os
+import random  # Pastikan modul random diimpor
 import sys
 
 # Function to read authorization tokens and hash codes from data.txt
