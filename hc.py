@@ -35,6 +35,7 @@ def collect_coin(auth_token, collect_amount, hash_code, collect_seq_no):
         "hashCode": hash_code,
         "collectSeqNo": collect_seq_no
     }
+    print(f"Sending payload: {payload}")  # Debug statement to check payload
     response = requests.post(url, headers=headers, json=payload)
     try:
         return response.status_code, response.json()
@@ -61,11 +62,11 @@ def main():
         print(f'Processing account {idx}/{total_accounts}')
         
         initial_collect_seq_no = random.randint(1, 10)  # Initial collect sequence number
-        collect_amount = random.randint(100, 300)  # Random collect amount between 100 and 300
         times_to_collect = random.randint(5, 10)  # Random number of times to perform collect_coin
         
         for attempt in range(times_to_collect):
             collect_seq_no = initial_collect_seq_no + attempt
+            collect_amount = random.randint(100, 300)  # Random collect amount between 100 and 300
             new_hash_code = generate_new_hash_code(existing_hash_code)
             
             status_code, response_data = collect_coin(token, collect_amount, new_hash_code, collect_seq_no)
