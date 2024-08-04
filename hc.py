@@ -2,8 +2,9 @@ import requests
 import time
 import json
 import os
-import random  # Pastikan modul random diimpor
+import random
 import sys
+import hashlib
 
 # Function to read authorization tokens and hash codes from data.txt
 def read_authorizations(file_path):
@@ -16,6 +17,12 @@ def read_authorizations(file_path):
             auth_data.append((auth_token, hash_code))
     return auth_data
 
+# Function to generate a new hashCode based on an existing hashCode
+def generate_new_hash_code(existing_hash_code):
+    random_suffix = ''.join(random.choices('abcdef0123456789', k=8))
+    new_hash_code = hashlib.sha256((existing_hash_code + random_suffix).encode()).hexdigest()
+    return new_hash_code
+
 # Function to perform the POST request
 def collect_coin(auth_token, collect_amount, hash_code, collect_seq_no):
     url = "https://api.holdcoin.xyz/miniapps/api/user_game/collectCoin"
@@ -24,7 +31,7 @@ def collect_coin(auth_token, collect_amount, hash_code, collect_seq_no):
         "Content-Type": "application/json"
     }
     payload = {
-        "collectAmount": 150,
+        "collectAmount": collect_amount,
         "hashCode": hash_code,
         "collectSeqNo": collect_seq_no
     }
@@ -47,16 +54,18 @@ def countdown_timer(seconds):
 def main():
     auth_data = read_authorizations('data.txt')
     total_accounts = len(auth_data)
-    collect_amount = 150  # Set a fixed collect amount
 
     print(f'Total accounts: {total_accounts}')
     
-    for idx, (token, hash_code) in enumerate(auth_data, start=1):
+    for idx, (token, existing_hash_code) in enumerate(auth_data, start=1):
         print(f'Processing account {idx}/{total_accounts}')
         
+        collect_amount = random.randint(100, 300)  # Random collect amount between 100 and 300
         collect_seq_no = random.randint(1, 10)  # Random collect sequence number
         
-        status_code, response_data = collect_coin(token, collect_amount, hash_code, collect_seq_no)
+        new_hash_code = generate_new_hash_code(existing_hash_code)
+        
+        status_code, response_data = collect_coin(token, collect_amount, new_hash_code, collect_seq_no)
         
         if status_code == 200:
             print(f'Account {idx} processed successfully: {response_data}')
