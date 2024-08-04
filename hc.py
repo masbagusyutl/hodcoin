@@ -60,17 +60,22 @@ def main():
     for idx, (token, existing_hash_code) in enumerate(auth_data, start=1):
         print(f'Processing account {idx}/{total_accounts}')
         
+        initial_collect_seq_no = random.randint(1, 10)  # Initial collect sequence number
         collect_amount = random.randint(100, 300)  # Random collect amount between 100 and 300
-        collect_seq_no = random.randint(1, 10)  # Random collect sequence number
+        times_to_collect = random.randint(5, 10)  # Random number of times to perform collect_coin
         
-        new_hash_code = generate_new_hash_code(existing_hash_code)
-        
-        status_code, response_data = collect_coin(token, collect_amount, new_hash_code, collect_seq_no)
-        
-        if status_code == 200:
-            print(f'Account {idx} processed successfully: {response_data}')
-        else:
-            print(f'Failed to process account {idx}: {response_data}')
+        for attempt in range(times_to_collect):
+            collect_seq_no = initial_collect_seq_no + attempt
+            new_hash_code = generate_new_hash_code(existing_hash_code)
+            
+            status_code, response_data = collect_coin(token, collect_amount, new_hash_code, collect_seq_no)
+            
+            if status_code == 200:
+                print(f'Account {idx} attempt {attempt+1}/{times_to_collect} processed successfully: {response_data}')
+            else:
+                print(f'Failed to process account {idx} attempt {attempt+1}/{times_to_collect}: {response_data}')
+            
+            time.sleep(5)  # Wait for 5 seconds before the next attempt
         
         time.sleep(5)  # Wait for 5 seconds before switching to the next account
     
